@@ -1,0 +1,35 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["pypdf"]
+# ///
+
+import sys
+from pathlib import Path
+from pypdf import PdfWriter
+
+def main():
+    if len(sys.argv) < 3:
+        print("Usage: merge-pdf <output.pdf> <input1.pdf|dir> [input2...]", file=sys.stderr)
+        sys.exit(1)
+
+    output = Path(sys.argv[1])
+    writer = PdfWriter()
+    count = 0
+
+    for arg in sys.argv[2:]:
+        p = Path(arg)
+        if p.is_dir():
+            files = sorted(p.glob("*.pdf"))
+        else:
+            files = [p]
+        for f in files:
+            writer.append(str(f))
+            count += 1
+            print(f"  [{count}] {f.name}")
+
+    writer.write(str(output))
+    print(f"Merged {count} PDFs -> {output}")
+
+if __name__ == "__main__":
+    main()
