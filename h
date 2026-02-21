@@ -2,7 +2,14 @@
 set -euo pipefail
 export LC_ALL=C
 
+# Follow loader: if ~/.zshrc sources another file, parse that instead
 ZSHRC="$HOME/.zshrc"
+if [[ -f "$ZSHRC" ]]; then
+  _src=$(grep -m1 '^source ' "$ZSHRC" 2>/dev/null | awk '{print $2}')
+  _src="${_src/#\~/$HOME}"
+  [[ -n "$_src" && -f "$_src" ]] && ZSHRC="$_src"
+  unset _src
+fi
 ZHIST="$HOME/.zsh_history"
 
 usage() {
