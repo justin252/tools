@@ -2,7 +2,8 @@
 set -euo pipefail
 export LC_ALL=C
 
-ZSHRC="$HOME/.zshrc"
+ZSHRC_FILES=("$HOME/dotfiles/shell/zshrc")
+[[ -f "$HOME/.zshrc.work" ]] && ZSHRC_FILES+=("$HOME/.zshrc.work")
 ZHIST="$HOME/.zsh_history"
 
 usage() {
@@ -24,7 +25,7 @@ parse_aliases() {
     elif [[ "$line" =~ '^([a-z_][a-zA-Z0-9_]*)\(\)' ]]; then
       printf '%s\t%s\t(function)\n' "$section" "${match[1]}"
     fi
-  done < "$ZSHRC"
+  done < <(cat "${ZSHRC_FILES[@]}")
 }
 
 browse() {
